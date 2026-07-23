@@ -1,21 +1,9 @@
-import Modal from "@/playground/Modal";
-import Tabs from "@/playground/Tabs";
-import Disclosure from "@/playground/Disclosure";
-
 export default function Home() {
   return (
-    <main>
-      <h1>Playground</h1>
-
-      <Modal />
-
-      <br />
-
-      <Tabs />
-
-      <br />
-
-      <Disclosure />
+    <main className="flex min-h-screen items-center justify-center">
+      <h1 className="text-5xl font-bold">
+        Nimra Iqbal
+      </h1>
     </main>
   );
 }
