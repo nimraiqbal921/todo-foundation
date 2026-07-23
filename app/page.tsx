@@ -1,13 +1,21 @@
+import Modal from "@/playground/Modal";
+import Tabs from "@/playground/Tabs";
+import Disclosure from "@/playground/Disclosure";
+
 export default function Home() {
   return (
-    <main className="p-10">
-      <h1 className="text-4xl font-bold">
-        Todo Application
-      </h1>
+    <main>
+      <h1>Playground</h1>
 
-      <p className="mt-4">
-        Foundation phase completed.
-      </p>
+      <Modal />
+
+      <br />
+
+      <Tabs />
+
+      <br />
+
+      <Disclosure />
     </main>
   );
 }
