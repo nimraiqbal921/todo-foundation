@@ -1,41 +1,51 @@
 import { streamText } from "ai";
-import { SYSTEM_PROMPT, MODEL } from "@/lib/ai";
+import { MODEL, SYSTEM_PROMPT } from "@/lib/ai";
 
 
+export async function POST(req: Request) {
 
-export async function POST(req:Request){
+  try {
 
+    const body = await req.json();
 
-  const {messages} = await req.json();
-
-
-
-  const result = streamText({
+    console.log("BODY:", JSON.stringify(body, null, 2));
 
 
-    model: MODEL,
+    const result = streamText({
+
+      model: MODEL,
+
+      system: SYSTEM_PROMPT,
+
+      messages: body.messages.map((message: any) => ({
+        role: message.role,
+        content: message.parts
+          .map((part:any)=>part.text)
+          .join("")
+      }))
+
+    });
 
 
-    system: SYSTEM_PROMPT,
+    return result.toUIMessageStreamResponse();
 
 
-    messages: messages.map((message:any)=>({
+  } catch(error) {
 
-      role: message.role,
+    console.error("CHAT ERROR:", error);
 
-      content: message.parts
-      .filter((part:any)=>part.type==="text")
-      .map((part:any)=>part.text)
-      .join("")
+    return new Response(
+      JSON.stringify({
+        error: "Something went wrong",
+      }),
+      {
+        status:500,
+        headers:{
+          "Content-Type":"application/json"
+        }
+      }
+    );
 
-    }))
-
-
-  });
-
-
-
-  return result.toUIMessageStreamResponse();
-
+  }
 
 }
