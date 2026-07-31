@@ -1,14 +1,24 @@
-import { groq } from "@ai-sdk/groq";
+import { createGroq } from "@ai-sdk/groq";
 
-// Groq model
-export const model = groq("llama-3.1-8b-instant");
 
-// System prompt
 export const SYSTEM_PROMPT = `
 You are a helpful AI assistant.
 
-Be friendly.
-Be concise.
-Give accurate answers.
-If you don't know something, say so instead of making it up.
+Answer clearly and politely.
+Help users with programming, learning,
+and general questions.
 `;
+
+
+
+export const groq = createGroq({
+
+  apiKey: process.env.GROQ_API_KEY,
+
+});
+
+
+
+export const MODEL = groq(
+  "llama-3.1-8b-instant"
+);
