@@ -2,10 +2,10 @@
 
 import { useChat } from "@ai-sdk/react";
 import { useState, useEffect, useRef } from "react";
+import ToolRenderer from "./ToolRenderer";
 
 
 export default function Chat() {
-
 
   const {
     messages,
@@ -15,11 +15,9 @@ export default function Chat() {
   } = useChat();
 
 
-
   const [input, setInput] = useState("");
 
   const [isAtBottom, setIsAtBottom] = useState(true);
-
 
 
   const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -28,35 +26,26 @@ export default function Chat() {
 
 
 
-
-  // Auto scroll only if user is already at bottom
-
   useEffect(() => {
 
-
-    if(isAtBottom){
+    if (isAtBottom) {
 
       bottomRef.current?.scrollIntoView({
-        behavior:"smooth",
+        behavior: "smooth",
       });
 
     }
 
-
-  },[messages,isAtBottom]);
-
+  }, [messages, isAtBottom]);
 
 
 
 
-  function handleScroll(){
-
+  function handleScroll() {
 
     const box = chatBoxRef.current;
 
-
-    if(!box) return;
-
+    if (!box) return;
 
 
     const atBottom =
@@ -65,9 +54,7 @@ export default function Chat() {
       box.clientHeight + 50;
 
 
-
     setIsAtBottom(atBottom);
-
 
   }
 
@@ -75,30 +62,22 @@ export default function Chat() {
 
 
 
-  function submit(e:React.FormEvent){
-
+  function submit(e: React.FormEvent) {
 
     e.preventDefault();
 
 
-
-    if(!input.trim()) return;
-
+    if (!input.trim()) return;
 
 
     sendMessage({
-
-      text:input,
-
+      text: input,
     });
-
 
 
     setInput("");
 
   }
-
-
 
 
 
@@ -110,9 +89,8 @@ export default function Chat() {
 
 
       <h1 className="text-3xl font-bold mb-5">
-        Groq AI Chat
+        AI Tool Chat
       </h1>
-
 
 
 
@@ -130,45 +108,38 @@ export default function Chat() {
         h-[500px]
         overflow-y-auto
         space-y-4
-        relative
         "
 
       >
 
 
-
-
-
         {
-          messages.map((message)=>(
-
+          messages.map((message) => (
 
             <div
 
-            key={message.id}
+              key={message.id}
 
-            className={`
-            p-3
-            rounded-lg
+              className={`
+              p-3
+              rounded-lg
 
-            ${
-              message.role==="user"
-              ?
-              "bg-blue-100 ml-10"
-              :
-              "bg-gray-100 mr-10"
-            }
-
-            `}
+              ${
+                message.role === "user"
+                ?
+                "bg-blue-100 ml-10"
+                :
+                "bg-gray-100 mr-10"
+              }
+              `}
 
             >
 
 
-
-              <p className="font-bold mb-1">
+              <p className="font-bold mb-2">
 
                 {
-                  message.role==="user"
+                  message.role === "user"
                   ?
                   "You"
                   :
@@ -179,14 +150,11 @@ export default function Chat() {
 
 
 
-
-
               {
-                message.parts.map((part,index)=>{
+                message.parts.map((part, index) => {
 
 
-                  if(part.type==="text"){
-
+                  if (part.type === "text") {
 
                     return (
 
@@ -194,64 +162,69 @@ export default function Chat() {
                         {part.text}
                       </p>
 
-                    )
+                    );
 
                   }
+
+
+
+                  if (
+                    part.type.startsWith("tool-")
+                  ) {
+
+                    return (
+
+                      <ToolRenderer
+
+                        key={index}
+
+                        part={part}
+
+                      />
+
+                    );
+
+                  }
+
 
 
                   return null;
 
 
                 })
-
               }
 
 
 
             </div>
 
-
           ))
-
         }
-
-
 
 
 
 
 
         {
-          status==="submitted" && (
+          status === "submitted" && (
 
-
-            <div
-
-            className="
+            <div className="
             bg-gray-100
             rounded-lg
             p-3
             mr-10
-            "
-
-            >
+            ">
 
               AI is thinking...
 
             </div>
 
-
           )
-
         }
 
 
 
-
-
-
         <div ref={bottomRef}/>
-
 
 
       </div>
@@ -261,52 +234,39 @@ export default function Chat() {
 
 
 
-
       {
         !isAtBottom && (
 
-
           <button
 
+            onClick={() => {
 
-          onClick={()=>{
+              bottomRef.current?.scrollIntoView({
+                behavior:"smooth",
+              });
 
+              setIsAtBottom(true);
 
-            bottomRef.current?.scrollIntoView({
+            }}
 
-              behavior:"smooth"
-
-            });
-
-
-            setIsAtBottom(true);
-
-
-          }}
-
-
-          className="
-          fixed
-          bottom-24
-          right-10
-          bg-black
-          text-white
-          px-4
-          py-2
-          rounded-full
-          "
+            className="
+            fixed
+            bottom-24
+            right-10
+            bg-black
+            text-white
+            px-4
+            py-2
+            rounded-full
+            "
 
           >
 
             Jump to latest ↓
 
-
           </button>
 
-
-
         )
-
       }
 
 
@@ -317,68 +277,40 @@ export default function Chat() {
 
       <form
 
-      onSubmit={submit}
+        onSubmit={submit}
 
-      className="
-      flex
-      gap-2
-      mt-4
-      "
-
+        className="
+        flex
+        gap-2
+        mt-4
+        "
 
       >
 
 
 
-
         <input
-
-
-        value={input}
-
-
-        onChange={(e)=>
-          setInput(e.target.value)
-        }
-
-
-        placeholder="Type message..."
-
-
-        className="
-        flex-1
-        border
-        rounded-lg
-        p-3
-        "
-
-
-        />
-
-
-
-
+  suppressHydrationWarning
+  value={input}
+  onChange={(e)=>
+    setInput(e.target.value)
+  }
+  placeholder="Ask something..."
+/>
 
 
 
         {
-
-          status==="streaming" ||
-          status==="submitted"
+          status === "streaming" ||
+          status === "submitted"
 
           ?
 
-
-          (
-
-            <button
-
+          <button
 
             type="button"
 
-
-            onClick={()=>stop()}
-
+            onClick={() => stop()}
 
             className="
             bg-red-600
@@ -387,27 +319,18 @@ export default function Chat() {
             rounded-lg
             "
 
-            >
+          >
 
-              Stop
+            Stop
 
-
-            </button>
-
-
-          )
+          </button>
 
 
           :
 
-
-          (
-
-            <button
-
+          <button
 
             type="submit"
-
 
             className="
             bg-black
@@ -416,20 +339,13 @@ export default function Chat() {
             rounded-lg
             "
 
-            >
+          >
 
-              Send
+            Send
 
-
-            </button>
-
-
-          )
-
+          </button>
 
         }
-
-
 
 
 
@@ -437,12 +353,8 @@ export default function Chat() {
 
 
 
-
-
     </div>
 
-
   );
-
 
 }
