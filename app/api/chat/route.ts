@@ -23,6 +23,10 @@ export async function POST(req: Request) {
       tools: {
         getTodos: getTodosTool,
       },
+
+      onError({ error }) {
+        console.error("STREAM ERROR:", error);
+      },
     });
 
     return result.toUIMessageStreamResponse();
