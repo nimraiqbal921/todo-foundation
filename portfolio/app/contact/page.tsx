@@ -12,6 +12,10 @@ export default function ContactPage() {
       <p>
         Email: j0327179@gmail.com
       </p>
+       <p>
+        Linkedin: www.linkedin.com/in/nimra-iqbal-42a69b414
+      </p>
     </main>
+
   );
 }
