@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getTasks } from "@/lib/task-storage";
+import { getTasks, saveTasks } from "@/lib/task-storage";
 import type { Task } from "@/lib/types";
 
 type RecommendedTask = {
@@ -25,6 +25,7 @@ export default function PlannerPage() {
   const [generating, setGenerating] = useState(false);
   const [plan, setPlan] = useState<StudyPlan | null>(null);
   const [error, setError] = useState("");
+  const [startedTaskId, setStartedTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     setTasks(getTasks());
@@ -77,6 +78,47 @@ export default function PlannerPage() {
 
   function getTask(taskId: string) {
     return tasks.find((task) => task.id === taskId);
+  }
+
+  function startTask(taskId: string) {
+    setStartedTaskId(taskId);
+
+    const task = getTask(taskId);
+
+    if (task) {
+      localStorage.setItem(
+        "studyflow-current-task",
+        JSON.stringify(task)
+      );
+    }
+  }
+
+  function markComplete(taskId: string) {
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId
+        ? {
+            ...task,
+            completed: true,
+          }
+        : task
+    );
+
+    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
+
+    if (startedTaskId === taskId) {
+      setStartedTaskId(null);
+      localStorage.removeItem("studyflow-current-task");
+    }
+
+    if (plan) {
+      setPlan({
+        ...plan,
+        recommendedTasks: plan.recommendedTasks.filter(
+          (recommended) => recommended.taskId !== taskId
+        ),
+      });
+    }
   }
 
   const activeTasks = tasks.filter(
@@ -315,14 +357,21 @@ export default function PlannerPage() {
                       recommended.taskId
                     );
 
-                    if (!task) {
+                    if (!task || task.completed) {
                       return null;
                     }
+
+                    const isStarted =
+                      startedTaskId === task.id;
 
                     return (
                       <div
                         key={recommended.taskId}
-                        className="rounded-xl border p-4"
+                        className={`rounded-xl border p-4 ${
+                          isStarted
+                            ? "border-indigo-200 bg-indigo-50/40"
+                            : "bg-white"
+                        }`}
                       >
 
                         <div className="flex items-start gap-4">
@@ -362,6 +411,44 @@ export default function PlannerPage() {
                               {task.category} · Due{" "}
                               {task.dueDate}
                             </p>
+
+                            {/* ACTIONS */}
+
+                            <div className="mt-4 flex flex-wrap gap-2">
+
+                              {!isStarted ? (
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    startTask(task.id)
+                                  }
+                                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                >
+                                  ▶ Start Task
+                                </button>
+
+                              ) : (
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    markComplete(task.id)
+                                  }
+                                  className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                                >
+                                  ✓ Mark Complete
+                                </button>
+
+                              )}
+
+                            </div>
+
+                            {isStarted && (
+                              <p className="mt-2 text-xs font-medium text-indigo-600">
+                                You're working on this task now.
+                              </p>
+                            )}
 
                           </div>
 
