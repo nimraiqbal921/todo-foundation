@@ -1,6 +1,6 @@
 import { groq } from "@ai-sdk/groq";
 
-export const MODEL = groq("llama-3.3-70b-versatile");
+export const MODEL = groq("openai/gpt-oss-120b");
 
 export const SYSTEM_PROMPT = `
 You are a helpful AI assistant.
