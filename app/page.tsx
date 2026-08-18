@@ -1,5 +1,9 @@
-import StudyHealthPage from "./study-health/page";
+import Chat from "../components/Chat";
 
 export default function Home() {
-  return <StudyHealthPage />;
+  return (
+    <main className="p-10">
+      <Chat />
+    </main>
+  );
 }
