@@ -1,6 +1,7 @@
-export default function Contact() {
+
+export default function ContactPage() {
   return (
-    <main style={{ padding: "40px", fontFamily: "Arial" }}>
+    <main style={{ padding: "40px" }}>
       <h1>Contact Me</h1>
 
       <p>
@@ -9,16 +10,12 @@ export default function Contact() {
       </p>
 
       <p>
-        Email: your-email@example.com
+        Email: j0327179@gmail.com
       </p>
-
-      <p>
-        GitHub: Your GitHub Profile
-      </p>
-
-      <p>
-        LinkedIn: Your LinkedIn Profile
+       <p>
+        Linkedin: www.linkedin.com/in/nimra-iqbal-42a69b414
       </p>
     </main>
+
   );
 }
